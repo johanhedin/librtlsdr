@@ -316,7 +316,7 @@ int fc0013_set_params(void *dev, uint32_t freq, uint32_t bandwidth)
 
 	/* From divided value (XDIV) determined the FA and FP value */
 	xdiv = (uint16_t)(f_vco / xtal_freq_div_2);
-	if ((f_vco - xdiv * xtal_freq_div_2) >= (xtal_freq_div_2 / 2))
+	if ((f_vco - xdiv * (uint64_t)xtal_freq_div_2) >= (xtal_freq_div_2 / 2))
 		xdiv++;
 
 	pm = (uint8_t)(xdiv / 8);
