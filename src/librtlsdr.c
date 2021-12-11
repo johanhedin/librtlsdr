@@ -3197,7 +3197,7 @@ int rtlsdr_open(rtlsdr_dev_t **out_dev, uint32_t index)
 
 #ifdef DETACH_KERNEL_DRIVER
 		if (!libusb_detach_kernel_driver(dev->devh, 0)) {
-			fprintf(stderr, "Detached kernel driver\n");
+			//fprintf(stderr, "Detached kernel driver\n");
 		} else {
 			fprintf(stderr, "Detaching kernel driver failed!");
 			goto err;
@@ -3214,7 +3214,7 @@ int rtlsdr_open(rtlsdr_dev_t **out_dev, uint32_t index)
 
 	r = libusb_claim_interface(dev->devh, 0);
 	if (r < 0) {
-		fprintf(stderr, "usb_claim_interface error %d\n", r);
+		//fprintf(stderr, "usb_claim_interface error %d\n", r);
 		goto err;
 	}
 
@@ -3234,28 +3234,28 @@ int rtlsdr_open(rtlsdr_dev_t **out_dev, uint32_t index)
 
 	reg = rtlsdr_i2c_read_reg(dev, E4K_I2C_ADDR, E4K_CHECK_ADDR);
 	if (reg == E4K_CHECK_VAL) {
-		fprintf(stderr, "Found Elonics E4000 tuner\n");
+		//fprintf(stderr, "Found Elonics E4000 tuner\n");
 		dev->tuner_type = RTLSDR_TUNER_E4000;
 		goto found;
 	}
 
 	reg = rtlsdr_i2c_read_reg(dev, FC0013_I2C_ADDR, FC0013_CHECK_ADDR);
 	if (reg == FC0013_CHECK_VAL) {
-		fprintf(stderr, "Found Fitipower FC0013 tuner\n");
+		//fprintf(stderr, "Found Fitipower FC0013 tuner\n");
 		dev->tuner_type = RTLSDR_TUNER_FC0013;
 		goto found;
 	}
 
 	reg = rtlsdr_i2c_read_reg(dev, R820T_I2C_ADDR, R82XX_CHECK_ADDR);
 	if (reg == R82XX_CHECK_VAL) {
-		fprintf(stderr, "Found Rafael Micro R820T/2 tuner\n");
+		//fprintf(stderr, "Found Rafael Micro R820T/2 tuner\n");
 		dev->tuner_type = RTLSDR_TUNER_R820T;
 		goto found;
 	}
 
 	reg = rtlsdr_i2c_read_reg(dev, R828D_I2C_ADDR, R82XX_CHECK_ADDR);
 	if (reg == R82XX_CHECK_VAL) {
-		fprintf(stderr, "Found Rafael Micro R828D tuner\n");
+		//fprintf(stderr, "Found Rafael Micro R828D tuner\n");
 		dev->tuner_type = RTLSDR_TUNER_R828D;
 		goto found;
 	}
@@ -3269,14 +3269,14 @@ int rtlsdr_open(rtlsdr_dev_t **out_dev, uint32_t index)
 
 	reg = rtlsdr_i2c_read_reg(dev, FC2580_I2C_ADDR, FC2580_CHECK_ADDR);
 	if ((reg & 0x7f) == FC2580_CHECK_VAL) {
-		fprintf(stderr, "Found FCI 2580 tuner\n");
+		//fprintf(stderr, "Found FCI 2580 tuner\n");
 		dev->tuner_type = RTLSDR_TUNER_FC2580;
 		goto found;
 	}
 
 	reg = rtlsdr_i2c_read_reg(dev, FC0012_I2C_ADDR, FC0012_CHECK_ADDR);
 	if (reg == FC0012_CHECK_VAL) {
-		fprintf(stderr, "Found Fitipower FC0012 tuner\n");
+		//fprintf(stderr, "Found Fitipower FC0012 tuner\n");
 		rtlsdr_set_gpio_output(dev, 6);
 		dev->tuner_type = RTLSDR_TUNER_FC0012;
 		/* rtlsdr_set_gpio_output(dev, 5); */
@@ -3385,7 +3385,7 @@ found:
 		rtlsdr_demod_write_reg(dev, 1, 0x15, 0x01, 1);
 		break;
 	case RTLSDR_TUNER_UNKNOWN:
-		fprintf(stderr, "No supported tuner found\n");
+		//fprintf(stderr, "No supported tuner found\n");
 		rtlsdr_set_direct_sampling(dev, 1);
 		break;
 	default:
@@ -3461,10 +3461,11 @@ int rtlsdr_close(rtlsdr_dev_t *dev)
 
 #ifdef DETACH_KERNEL_DRIVER
 	if (dev->driver_active) {
-		if (!libusb_attach_kernel_driver(dev->devh, 0))
-			fprintf(stderr, "Reattached kernel driver\n");
-		else
-			fprintf(stderr, "Reattaching kernel driver failed!\n");
+		libusb_attach_kernel_driver(dev->devh, 0);
+		//if (!libusb_attach_kernel_driver(dev->devh, 0))
+		//	fprintf(stderr, "Reattached kernel driver\n");
+		//else
+		//	fprintf(stderr, "Reattaching kernel driver failed!\n");
 	}
 #endif
 
@@ -3807,8 +3808,8 @@ static void LIBUSB_CALL _libusb_callback(struct libusb_transfer *xfer)
 #endif
 			dev->dev_lost = 1;
 			rtlsdr_cancel_async(dev);
-			fprintf(stderr, "cb transfer status: %d, "
-				"canceling...\n", xfer->status);
+			//fprintf(stderr, "cb transfer status: %d, "
+			//	"canceling...\n", xfer->status);
 #ifndef _WIN32
 		}
 #endif
@@ -3882,7 +3883,7 @@ static int _rtlsdr_alloc_async_buffers(rtlsdr_dev_t *dev)
 
 	/* no zero-copy available, allocate buffers in userspace */
 	if (!dev->use_zerocopy) {
-		fprintf(stderr, "Allocating %d (non-zero-copy) user-space buffers\n", dev->xfer_buf_num);
+		//fprintf(stderr, "Allocating %d (non-zero-copy) user-space buffers\n", dev->xfer_buf_num);
 		for (i = 0; i < dev->xfer_buf_num; ++i) {
 			dev->xfer_buf[i] = malloc(dev->xfer_buf_len);
 
